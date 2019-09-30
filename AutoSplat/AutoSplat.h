@@ -51,13 +51,13 @@ struct VERTEXINFO
 
 struct POLYSTRUCT
 {
-	UINT8 u0, v0;
+	UINT8 u0, v0;	//	Point 1
 	UINT16 clut;
-	UINT8 u1, v1;
+	UINT8 u1, v1;	//	Point 2
 	UINT16 tpage;
-	UINT8 u2, v2;
+	UINT8 u2, v2;	//	Point 3
 	UINT16 sInfo;
-	UINT8 u3, v3;
+	UINT8 u3, v3;	//	Point 4
 	UINT8 cRot, cTileRef;
 	// 00000000 00000111	-> 0-7  - Rotation of Texture
 };// 16 bytes

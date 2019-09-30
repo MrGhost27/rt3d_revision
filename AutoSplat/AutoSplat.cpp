@@ -685,10 +685,22 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 	int mapIndex = 1;
 	int tileRot = 1;
 
-	CopyTIM2Buffer(_TIMXPOS(tileIndex), _TIMYPOS(tileIndex), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
+	//CopyTIM2Buffer(_TIMXPOS(tileIndex), _TIMYPOS(tileIndex), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
+	Color myColor = MakeColor(0, 170, 0);
 
-	//for()
+	//for()	// Loop through something
+	for (int xx = 0; xx < 2048; xx++)
+	{
+		for (int yy = 0; yy < 2048; yy++)
+		{
+			SetBufferPixel(xx, yy, myColor);
+		}
+	}
 
+	/*
+	We need the color information from inside the TIM Buffer.  
+	This will hopefully return an INT which should be the Color value for a given pixel, at a given rotation?
+	*/
 
 	return 0;
 }
