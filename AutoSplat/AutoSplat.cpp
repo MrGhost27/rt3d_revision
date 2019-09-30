@@ -643,6 +643,11 @@ int CalculateUniqueCLUTs(TIM_FILE* pTims, int timCount, vector<SHARED_CLUT> &vCL
 void SetBufferPixel(int x, int y, Color c)
 {
 	g_pMapBuffer[(y * 2048) + x] = c;
+	// Y is the height. 0 Top left corner.  X being the horizontal axis. 1 is the next pixel to the right.
+	// Y is therefore the row. 2048 pixels further along.
+	// And it should tell the map buffer which colour was passed to this function. But Called by Whom?
+	// Called by... We are writing the Draw Segments To Buffer function.
+	// So we're using a nested for loop, to repeatedly call this function to set colour.
 }
 
 // Function:	CopyTIM2Buffer
@@ -668,6 +673,22 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 	// TO DO: Implement this function (see slides)
 	// Note the code below should copy the TIM at index "tileIndex" to the map grid square "mapIndex" 
 	// CopyTIM2Buffer(_TIMXPOS(tileIndex), _TIMYPOS(tileIndex), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
+
+	// So this function is passed a pointer to a collection of Segments. Where is this coming from?
+	/*
+	each Segment contains 16 POLYSTRUCTS
+	For each Polystruct, need to go through stuff.
+	*/
+	
+	// By passing the function _TIMXPOS
+	int tileIndex = 1;
+	int mapIndex = 1;
+	int tileRot = 1;
+
+	CopyTIM2Buffer(_TIMXPOS(tileIndex), _TIMYPOS(tileIndex), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
+
+	//for()
+
 
 	return 0;
 }
