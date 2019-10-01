@@ -683,17 +683,16 @@ int CopyTIM2Buffer(int sourcex, int sourcey, int destx, int desty, int rot)
 			// Rotations - Consider matrix Maths.
 
 			switch (rot) {
-			case 0: break;
-			case 1: realX = 31 - xPixel; break;
-			case 2: break;
-			case 3: break;
-			case 4: break;
-			case 5: realY = 31 - yPixel; break;
-			case 6: break;
-			case 7: break;
+			case 0: break;						// No change
+			case 1: realX = 31 - xPixel; break;	// Flip on X axis.
+			case 2: realX = yPixel; realY = 31 - xPixel; break;	// Rotate 90.
+			case 3: realX = 31 - yPixel; realY = 31 - xPixel; break;	// Flip X & rotate 90. 
+			case 4: realX = 31 - xPixel; realY = 31 - yPixel; break;	// Rotate 180
+			case 5: realY = 31 - yPixel; break;	// Flip on Y axis
+			case 6: realX = 31 - yPixel; realY = xPixel; break;	// Rotate 270
+			case 7: realX = 31 - yPixel; realY = 31 - xPixel; break;	// Rotate 270 and Flip on X
 			default: break;
 			}
-			
 			
 			SetBufferPixel(destx + realX, desty + realY, C);		//	Spit the pixel colour onto the map
 		}
@@ -765,8 +764,8 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 					// A polystruct has 4 UV Coords. Presumably the 4 corners of a texture.
 					// It also has a rotation value. And we can use maths to work out where we want to put things.
 
-					int SegmentsCrossed = (SegmentRow * 16 + SegmentColumn);
-					int PolystructsCrossed = PolySRow * 4 + PolySColumn; 
+					//int SegmentsCrossed = (SegmentRow * 16 + SegmentColumn);
+					//int PolystructsCrossed = PolySRow * 4 + PolySColumn; 
 					// Don't care how many Poly's we've crossed What's the Poly Column.
 					//int TotalPolystructsCrossed = (SegmentsCrossed * 16) + PolystructsCrossed;
 					//int TotalPolystructsCrossed = (SegmentsCrossed * 256) + PolystructsCrossed;
@@ -782,10 +781,11 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 
 
 					tileRot = P.cRot;
+					tileIndex = P.cTileRef;
 					//Polystruct Index 4096 0-4095
 
 					//CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
-					CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), TotalXPolys * 32, TotalYPolys * 32, tileRot);
+					CopyTIM2Buffer(_TIMXPOS(tileIndex), _TIMYPOS(tileIndex), TotalXPolys * 32, TotalYPolys * 32, tileRot);
 					//CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), SegmentsCrossed*128, _MAPYPOS(TotalPolystructsCrossed), tileRot);
 				}
 			}
