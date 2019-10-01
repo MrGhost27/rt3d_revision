@@ -48,7 +48,7 @@ int g_clutBase = 0;
 
 // Once upon a time...
 int main()
-{  
+{
 	// Not officially a console app, but we can grab the arguments this way in a Win32 app
 	int argc = __argc;
 	char** argv = __argv;
@@ -71,16 +71,16 @@ int main()
 	if (fileAndPath.find(".PTM") == string::npos)
 		return FatalError("Error: AutoSplat can only process files with the PTM file extension.");
 
-	int timCount = UnmanglePTM( argv[1], pTIMData );
+	int timCount = UnmanglePTM(argv[1], pTIMData);
 
-	if( timCount <= 0 )
+	if (timCount <= 0)
 		return FatalError("Error: Error loading TIM data from .PTM file");
 
 	int uniqueCLUTs = CalculateUniqueCLUTs(pTIMData, timCount, g_vCLUTs);
 
 	int segmentCount = UnmanglePMM(argv[1], pSegmentData);
 
-	if( segmentCount < 256 )
+	if (segmentCount < 256)
 		return FatalError("Error: AutoSplat requires a matching file with the PMM file extension in the same directory as the PTM.");
 
 	// **************************************
@@ -123,13 +123,13 @@ int main()
 	//  Display keyboard controls
 	// **************************************
 
-	DrawString( 303, 730, "KEYBOARD CONTROLS", MakeColor(255, 255, 0));
-	DrawString( 303, 736, "__________________", MakeColor(255, 255, 0));
-	DrawString( 274, 770, "'M': Map Mode (default)", MakeColor(255, 255, 0));
+	DrawString(303, 730, "KEYBOARD CONTROLS", MakeColor(255, 255, 0));
+	DrawString(303, 736, "__________________", MakeColor(255, 255, 0));
+	DrawString(274, 770, "'M': Map Mode (default)", MakeColor(255, 255, 0));
 	DrawString(274, 800, "'T': Texture Mode", MakeColor(255, 255, 0));
 	DrawString(274, 830, "Arrow Keys: Scroll", MakeColor(255, 255, 0));
 	DrawString(274, 860, "'S': Save Splat Layers", MakeColor(255, 255, 0));
-	
+
 	// **************************************
 	// **************************************
 	//  MAIN UPDATE LOOP
@@ -143,12 +143,14 @@ int main()
 	enum mode { MODE_MAP = 0, MODE_TEXTURES };
 	mode theMode = MODE_MAP;
 
-	while ( !bExit )
+	while (!bExit)
 	{
-		bool bUpdateCLUTs = false , bUpdateColours = false, bUpdateChannels = false, bUpdateSegments = false, bUpdateTIMs = false, bUpdateTextures = false;
+		bool bUpdateCLUTs = false, bUpdateColours = false, bUpdateChannels = false, bUpdateSegments = false, bUpdateTIMs = false, bUpdateTextures = false;
 
-		if( bRestoredData )
-			{ bUpdateCLUTs = true, bUpdateColours = true, bUpdateChannels = true, bUpdateSegments = true; bUpdateTIMs = true; bRestoredData = false; }
+		if (bRestoredData)
+		{
+			bUpdateCLUTs = true, bUpdateColours = true, bUpdateChannels = true, bUpdateSegments = true; bUpdateTIMs = true; bRestoredData = false;
+		}
 
 		// ***********************************************************************
 		//  Process mouse clicks against selectable cluts, channels and colours
@@ -163,7 +165,7 @@ int main()
 
 			for (int c = 0; c < SPLAT_CHANNELS; c++)
 			{
-				if (MouseX() > _CHXPOS(c) && MouseX() < _CHXPOS(c) + 32 && 	MouseY() > _CHYPOS(c) && MouseY() < _CHYPOS(c) + 32)
+				if (MouseX() > _CHXPOS(c) && MouseX() < _CHXPOS(c) + 32 && MouseY() > _CHYPOS(c) && MouseY() < _CHYPOS(c) + 32)
 					selChan = c;
 			}
 		}
@@ -191,10 +193,14 @@ int main()
 			if (MouseX() > _COLXPOS(c) && MouseX() < _COLXPOS(c) + 32 && MouseY() > _COLYPOS(c) && MouseY() < _COLYPOS(c) + 32)
 			{
 				if (LeftMousePressed())
-					{ selCol = c; g_vCLUTs[selCLUT].channels[c] = selChan;	}
-				
+				{
+					selCol = c; g_vCLUTs[selCLUT].channels[c] = selChan;
+				}
+
 				if (RightMousePressed())
-					{ selCol = c; g_vCLUTs[selCLUT].channels[c] = -1; }
+				{
+					selCol = c; g_vCLUTs[selCLUT].channels[c] = -1;
+				}
 			}
 		}
 
@@ -203,36 +209,40 @@ int main()
 		// **************************************
 
 		char key = LastKey();
-		static string texturePath = folderPath +string("\\..\\Textures");
+		static string texturePath = folderPath + string("\\..\\Textures");
 
 		switch (key)
 		{
-			case 'x': bExit = true; break;
-			case 'm': 
-				bUpdateSegments = true; 
-				theMode = MODE_MAP;
-				break;
-			case 't': 
-				LoadPNGThumbnails(texturePath);
-				bUpdateTextures = true; 
-				theMode = MODE_TEXTURES;
-				break;
+		case 'x': bExit = true; break;
+		case 'm':
+			bUpdateSegments = true;
+			theMode = MODE_MAP;
+			break;
+		case 't':
+			LoadPNGThumbnails(texturePath);
+			bUpdateTextures = true;
+			theMode = MODE_TEXTURES;
+			break;
 
-			case Left: if (xscroll == 1024) { xscroll = 0; } theMode==MODE_MAP ? bUpdateSegments=true : bUpdateTextures = true; break;
-			case Right: if (xscroll == 0) { xscroll = 1024; } theMode == MODE_MAP ? bUpdateSegments = true : bUpdateTextures = true; break;
-			case Up: if (yscroll == 1024) { yscroll = 0; } theMode == MODE_MAP ? bUpdateSegments = true : bUpdateTextures = true; break;
-			case Down: if (yscroll == 0) { yscroll = 1024; } theMode == MODE_MAP ? bUpdateSegments = true : bUpdateTextures = true; break;
+		case Left: if (xscroll == 1024) { xscroll = 0; } theMode == MODE_MAP ? bUpdateSegments = true : bUpdateTextures = true; break;
+		case Right: if (xscroll == 0) { xscroll = 1024; } theMode == MODE_MAP ? bUpdateSegments = true : bUpdateTextures = true; break;
+		case Up: if (yscroll == 1024) { yscroll = 0; } theMode == MODE_MAP ? bUpdateSegments = true : bUpdateTextures = true; break;
+		case Down: if (yscroll == 0) { yscroll = 1024; } theMode == MODE_MAP ? bUpdateSegments = true : bUpdateTextures = true; break;
 
-			case 's': 
-				SaveChannelPNGs(folderPath, pSegmentData, pTIMData);
-				break;
+		case 's':
+			SaveChannelPNGs(folderPath, pSegmentData, pTIMData);
+			break;
 		}
 
 		if (prevSelCLUT != selCLUT)
-			{ bUpdateCLUTs = true; bUpdateColours = true; }
+		{
+			bUpdateCLUTs = true; bUpdateColours = true;
+		}
 
 		if (prevSelCol != selCol)
-			{ bUpdateColours = true; bUpdateCLUTs = true; }
+		{
+			bUpdateColours = true; bUpdateCLUTs = true;
+		}
 
 		if (prevSelChan != selChan)
 			bUpdateChannels = true;
@@ -330,11 +340,11 @@ int main()
 		// ***********************************************
 		//  Refresh screen when selected channel changes
 		// ***********************************************
-		if ( bUpdateChannels )
+		if (bUpdateChannels)
 		{
 			DrawString(273, g_clutBase + 112, "9 channels", MakeColor(255, 255, 255));
 
-			for (int c = 0; c<SPLAT_CHANNELS; c++)
+			for (int c = 0; c < SPLAT_CHANNELS; c++)
 				DrawRectangle(_CHXPOS(c), _CHYPOS(c), 32, 32, g_chanCol[c], true);
 
 			DrawRectangle(_CHXPOS(prevSelChan) - 1, _CHYPOS(prevSelChan) - 1, 34, 34, MakeColor(0, 0, 0), false);
@@ -345,7 +355,7 @@ int main()
 		}
 
 
-		string coords = "[" + to_string(xscroll+1024) + "," + to_string(yscroll) + "]";
+		string coords = "[" + to_string(xscroll + 1024) + "," + to_string(yscroll) + "]";
 		int swidth = MeasureString(coords);
 
 		// ***********************************************
@@ -357,19 +367,19 @@ int main()
 			BlitPixels(g_pMapBuffer, BUFX, BUFY, xscroll, yscroll, 1024, 1024, 2048);
 
 			DrawRectangle(1300, 3, 260, 20, MakeColor(0, 0, 0), true);
-			DrawString(1560-swidth-4, 4, coords, MakeColor(255, 255, 255));
+			DrawString(1560 - swidth - 4, 4, coords, MakeColor(255, 255, 255));
 		}
 
 
 		// ***********************************************
 		//  Refresh texture select changes
 		// ***********************************************
-		if (bUpdateTextures == true && theMode == MODE_TEXTURES )
+		if (bUpdateTextures == true && theMode == MODE_TEXTURES)
 		{
 			BlitPixels(g_pThumbBuffer, BUFX, BUFY, xscroll, yscroll, 1024, 1024, 2048);
 
-			int relXPos =  _TEXTUREXPOS(selTexture);
-			int relYPos =  _TEXTUREYPOS(selTexture);
+			int relXPos = _TEXTUREXPOS(selTexture);
+			int relYPos = _TEXTUREYPOS(selTexture);
 
 			if (relXPos >= xscroll && relXPos < xscroll + 1024 && relYPos >= yscroll && relYPos < yscroll + 1024)
 			{
@@ -381,7 +391,7 @@ int main()
 
 			prevSelTexture = selTexture;
 
-			if (lightTexture != -1 )
+			if (lightTexture != -1)
 			{
 				relXPos = _TEXTUREXPOS(lightTexture);
 				relYPos = _TEXTUREYPOS(lightTexture);
@@ -393,7 +403,7 @@ int main()
 
 					string s = "< >";
 
-					if( lightTexture < g_vTextures.size() )
+					if (lightTexture < g_vTextures.size())
 						s = "< " + g_vTextures[lightTexture] + " >";
 
 					int w = MeasureString(s);
@@ -408,7 +418,7 @@ int main()
 			prevLightTexture = lightTexture;
 
 			DrawRectangle(1300, 3, 260, 20, MakeColor(0, 0, 0), true);
-			DrawString(1560 - swidth-4, 4, coords, MakeColor(255, 255, 255));
+			DrawString(1560 - swidth - 4, 4, coords, MakeColor(255, 255, 255));
 		}
 
 		frame++;
@@ -458,9 +468,9 @@ int DrawTIM(TIM_FILE& timData, int x, int y)
 		{
 			int pixelIndex = (dy * 8) + (int)floor(dx / 4);
 			int colourIndex = timData.pixel.pixelData[pixelIndex];
-			colourIndex = (colourIndex>> ((dx % 4) * 4)) & 0xF;
+			colourIndex = (colourIndex >> ((dx % 4) * 4)) & 0xF;
 			Color col = GetCLUTcolour(timData.clut, colourIndex);
-			SetPixel(x + dx, y + dy, col );
+			SetPixel(x + dx, y + dy, col);
 		}
 	}
 	return 0;
@@ -475,12 +485,12 @@ int DrawTIM(TIM_FILE& timData, int x, int y)
 // Returns:		The colour (either the original or an override)
 Color GetCLUTcolour(CLUT_BLOCK& clut, int index)
 {
-	int red	= (clut.clutData[index])&0x001F;
-	int green = (clut.clutData[index]>>5) & 0x001F;
-	int blue = (clut.clutData[index]>>10) & 0x001F;
-	
+	int red = (clut.clutData[index]) & 0x001F;
+	int green = (clut.clutData[index] >> 5) & 0x001F;
+	int blue = (clut.clutData[index] >> 10) & 0x001F;
+
 	// Cluts are only 5-bits per channel, hence they need to be scaled
-	Color col = MakeColor(red*8, green*8, blue*8);
+	Color col = MakeColor(red * 8, green * 8, blue * 8);
 
 	bool bMatched;
 	for (SHARED_CLUT& sclut : g_vCLUTs)
@@ -520,7 +530,7 @@ Color GetOriginalCLUTcolour(SHARED_CLUT& clut, int index)
 //				pTims (returned) - pointer to an array of TIMs allocated by the function
 // Returns:		Number of TIMs in PTM (up to 256)
 // Notes:		pTims is passed by reference; function allocated memory, but it is up to the calling program to delete!
-int UnmanglePTM(char* filename, TIM_FILE* &pTims )
+int UnmanglePTM(char* filename, TIM_FILE* &pTims)
 {
 	ifstream inputFile;
 
@@ -543,7 +553,7 @@ int UnmanglePTM(char* filename, TIM_FILE* &pTims )
 
 	delete pUnmangleBuffer;
 	delete pInputBuffer;
-	   
+
 	return timCount; // up to calling program to delete memory!
 }
 
@@ -573,11 +583,11 @@ int UnmanglePMM(char* filename, SEGMENT* &pSegments)
 	// Unmange the mangled file into an disproportionately larger buffer (we have no idea how big it will be!)
 	unsigned char* pUnmangleBuffer = new unsigned char[1000000];
 	int unmangledBufferSize = Unmangle(pUnmangleBuffer, (unsigned char*)pInputBuffer);
-	int segmentCount = unmangledBufferSize / sizeof(SEGMENT); 
+	int segmentCount = unmangledBufferSize / sizeof(SEGMENT);
 	// Copy to a perfectly sized array of structures
 	pSegments = new SEGMENT[segmentCount];
 	memcpy(pSegments, (char*)pUnmangleBuffer, sizeof(SEGMENT)*segmentCount);
-	
+
 	delete pUnmangleBuffer;
 	delete pInputBuffer;
 
@@ -605,7 +615,7 @@ int CalculateUniqueCLUTs(TIM_FILE* pTims, int timCount, vector<SHARED_CLUT> &vCL
 	for (int t = 1; t < timCount; t++)
 	{
 		CLUT_BLOCK timCLUT = pTims[t].clut;
-		
+
 		bool bMatched;
 
 		for (SHARED_CLUT& clut : vCLUTs)
@@ -624,13 +634,13 @@ int CalculateUniqueCLUTs(TIM_FILE* pTims, int timCount, vector<SHARED_CLUT> &vCL
 			}
 		}
 
-		if( !bMatched )
+		if (!bMatched)
 		{
 			SHARED_CLUT newCLUT;
 			memcpy(newCLUT.clutData, pTims[t].clut.clutData, sizeof(short) * 16);
 			newCLUT.sharedRefs.push_back(t);
 			vCLUTs.push_back(newCLUT);
-			
+
 			uniqueCLUTs++;
 		}
 	}
@@ -643,11 +653,6 @@ int CalculateUniqueCLUTs(TIM_FILE* pTims, int timCount, vector<SHARED_CLUT> &vCL
 void SetBufferPixel(int x, int y, Color c)
 {
 	g_pMapBuffer[(y * 2048) + x] = c;
-	// Y is the height. 0 Top left corner.  X being the horizontal axis. 1 is the next pixel to the right.
-	// Y is therefore the row. 2048 pixels further along.
-	// And it should tell the map buffer which colour was passed to this function. But Called by Whom?
-	// Called by... We are writing the Draw Segments To Buffer function.
-	// So we're using a nested for loop, to repeatedly call this function to set colour.
 }
 
 // Function:	CopyTIM2Buffer
@@ -658,6 +663,42 @@ void SetBufferPixel(int x, int y, Color c)
 int CopyTIM2Buffer(int sourcex, int sourcey, int destx, int desty, int rot)
 {
 	// TO DO: Implement this function (see slides)
+
+	//SetBufferPixel();
+	/* read
+	For Every pixel within the TIM, we want to write this to the Map Buffer.
+	*/
+
+	
+
+	for (int yPixel = 0; yPixel < 32; yPixel++)
+	{
+		for (int xPixel = 0; xPixel < 32; xPixel++)
+		{
+			Color C = GetPixel(sourcex + xPixel, sourcey + yPixel);	//	Get a pixel colour
+
+			int realX = xPixel;
+			int realY = yPixel;
+
+			switch (rot) {
+			case 0: break;
+			case 1: realX = 31 - xPixel; break;
+			case 2: break;
+			case 3: break;
+			case 4: break;
+			case 5: realY = 31 - yPixel; break;
+			case 6: break;
+			case 7: break;
+			default: break;
+			}
+			
+			
+			SetBufferPixel(destx + realX, desty + realY, C);		//	Spit the pixel colour onto the map
+		}
+	}
+
+
+
 
 	return 0;
 }
@@ -674,32 +715,83 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 	// Note the code below should copy the TIM at index "tileIndex" to the map grid square "mapIndex" 
 	// CopyTIM2Buffer(_TIMXPOS(tileIndex), _TIMYPOS(tileIndex), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
 
-	// So this function is passed a pointer to a collection of Segments. Where is this coming from?
-	/*
-	each Segment contains 16 POLYSTRUCTS
-	For each Polystruct, need to go through stuff.
-	*/
-	
-	// By passing the function _TIMXPOS
-	int tileIndex = 1;
-	int mapIndex = 1;
-	int tileRot = 1;
-
-	//CopyTIM2Buffer(_TIMXPOS(tileIndex), _TIMYPOS(tileIndex), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
+	///////////////////////////////BLUNT COLOURING/////////////////////////////////////////
+	// Pick a colour
 	Color myColor = MakeColor(0, 170, 0);
 
-	//for()	// Loop through something
+	// stuff every single pixel with the colour you picked.
 	for (int xx = 0; xx < 2048; xx++)
 	{
 		for (int yy = 0; yy < 2048; yy++)
 		{
-			SetBufferPixel(xx, yy, myColor);
+			//SetBufferPixel(xx, yy, myColor);
+		}
+	}
+	////////////////////////////////////////////////////////////////////////////////////////
+
+	// So this function is passed a pointer to a collection of Segments.
+	// 256 Segments?
+	/*
+	each Segment contains 16 POLYSTRUCTS
+	For each Polystruct, need to go through stuff.
+	*/
+
+	/*
+	We need the color information from inside the TIM Buffer.
+	This will hopefully return an INT which should be the Color value for a given pixel, at a given rotation?
+	*/
+
+	int tileIndex = 1;
+	int mapIndex = 1;
+	int tileRot = 1;
+
+	for (int SegmentRow = 0; SegmentRow < 16; SegmentRow++)					// 4th Loop through every Row of Columns of Segment's Polystruct's rows of columns
+	{
+		for (int SegmentColumn = 0; SegmentColumn < 16; SegmentColumn++)	// 3rd Loop through Every Column of Segment's collection of Polystructs
+		{
+			for (int PolySRow = 0; PolySRow < 4; PolySRow++)				// 2nd Loop through every Polystruct Row of Columns
+			{
+				for (int PolySColumn = 0; PolySColumn < 4; PolySColumn++)	// 1st Loop through all Polystruct Columns
+				{
+					// What is the TIM at this place? Polystruct tells you which TIM index right?
+					// What is the Color on that TIM at the specific pixel?
+					// What is the Destination Pixel (out of 2048 * 2048 = 4,194,000 ish)
+					// Set the Pixel to that colour.
+
+					// A polystruct has 4 UV Coords. Presumably the 4 corners of a texture.
+					// It also has a rotation value. And we can use maths to work out where we want to put things.
+
+					int SegmentsCrossed = (SegmentRow * 16 + SegmentColumn);
+					int PolystructsCrossed = PolySRow * 4 + PolySColumn;
+					int TotalPolystructsCrossed = (SegmentsCrossed * 16) + PolystructsCrossed;
+
+					//int xPixel = (SegmentColumn * 128) + (PolySColumn * 16);
+					//int yPixel = (SegmentRow * 2048) + (PolySRow * 16);
+					
+					POLYSTRUCT P = pSegments->strTilePolyStruct[TotalPolystructsCrossed];
+					tileRot = P.cRot;
+					//Polystruct Index 4096 0-4095
+
+					//CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
+					CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), _MAPXPOS(TotalPolystructsCrossed), _MAPYPOS(TotalPolystructsCrossed), tileRot);
+					//CopyTIM2Buffer(xPixel, yPixel, xPixel, yPixel, 1);
+				}
+			}
 		}
 	}
 
+
+	// By passing the function _TIMXPOS
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	/*
-	We need the color information from inside the TIM Buffer.  
-	This will hopefully return an INT which should be the Color value for a given pixel, at a given rotation?
+	Look at the first segment.
+	Go through all 16 Polystructs of the 1st segment. (POLYSTRUCTS = TIM Representation)?
+	Copying 4 TIMS across. 4 Times. (4 rows).
+
+
 	*/
 
 	return 0;
@@ -722,7 +814,7 @@ int SaveDiffusePNG(string &folderPath, SEGMENT* pSegmentData, TIM_FILE* pTIMData
 
 	int ret = SaveNewBitmap2PNG(g_pMapBuffer, fileAndPath, 2048, 2048);
 
-	DrawRectangle(MESSX, MESSY-1, 1024, 32, MakeColor(0, 0, 0), true);
+	DrawRectangle(MESSX, MESSY - 1, 1024, 32, MakeColor(0, 0, 0), true);
 
 	return ret;
 }
@@ -734,14 +826,14 @@ int SaveDiffusePNG(string &folderPath, SEGMENT* pSegmentData, TIM_FILE* pTIMData
 //				pSegmentData - opointer to the SEGMENT data storing the map data
 //				pTIMData - texture data for drawing the level map
 // Returns:		1 for success
-int SaveChannelPNGs(string &folderPath, SEGMENT* pSegmentData, TIM_FILE* pTIMData )
+int SaveChannelPNGs(string &folderPath, SEGMENT* pSegmentData, TIM_FILE* pTIMData)
 {
 	DrawSegments2Buffer(pSegmentData);
 
 	uint32_t* pChannelBuffer = new uint32_t[2048 * 2048];
 
 	uint32_t *pSource, *pDest;
-	
+
 	for (int chan = 0; chan < 9; chan++)
 	{
 		string fileAndPath = folderPath + string("\\Channel_") + to_string(chan) + ".png";
@@ -763,10 +855,10 @@ int SaveChannelPNGs(string &folderPath, SEGMENT* pSegmentData, TIM_FILE* pTIMDat
 			pDest++;
 		}
 
-		if( SaveNewBitmap2PNG(pChannelBuffer, fileAndPath, 2048, 2048) != 1 )
+		if (SaveNewBitmap2PNG(pChannelBuffer, fileAndPath, 2048, 2048) != 1)
 			return Error("Error: Unable to save channel PNGs.");
 
-		DrawRectangle(MESSX, MESSY-1, 1024, 32, MakeColor(0, 0, 0), true);
+		DrawRectangle(MESSX, MESSY - 1, 1024, 32, MakeColor(0, 0, 0), true);
 	}
 
 	SaveCLUTChannelData(folderPath);
@@ -780,34 +872,34 @@ int SaveChannelPNGs(string &folderPath, SEGMENT* pSegmentData, TIM_FILE* pTIMDat
 // Description: Reloads the saved shared CLUT data and channel overrides for this level
 // Arguments:	folderPath - reference to string defining where to find it
 // Returns:		1 for success
-int LoadCLUTChannelData(string &folderPath) 
-{ 
+int LoadCLUTChannelData(string &folderPath)
+{
 	ifstream inputFile;
 
 	string filename = folderPath + "\\splat.sav";
 
 	inputFile.open(filename, ios::binary | ios::in);
 
-	if( inputFile.fail())
+	if (inputFile.fail())
 		return Error("Error: Unable to restore splat file.");
-	
+
 	for (SHARED_CLUT& clut : g_vCLUTs)
 	{
-		for( int col=0; col<16; col++ )
+		for (int col = 0; col < 16; col++)
 			inputFile.read((char*)&clut.channels[col], sizeof(int));
 	}
 
 	inputFile.close();
 
-	return 1; 
+	return 1;
 }
 
 // Function:	SaveCLUTChannelData
 // Description: Saves the shared CLUT data and channel overrides for this level
 // Arguments:	folderPath - reference to string defining where to put it
 // Returns:		1 for success
-int SaveCLUTChannelData(string &folderPath) 
-{ 
+int SaveCLUTChannelData(string &folderPath)
+{
 	ofstream outputFile;
 
 	string filename = folderPath + "\\splat.sav";
@@ -925,7 +1017,7 @@ int RestorePNGThumbnails(string &folderPath)
 		}
 	}
 
-	if( files != totalFiles )
+	if (files != totalFiles)
 		unchanged = false;
 
 	if (!unchanged)
@@ -935,7 +1027,7 @@ int RestorePNGThumbnails(string &folderPath)
 
 	LoadPNGBits(filename, 2048, 2048, g_pThumbBuffer);
 
-	DrawRectangle(MESSX, MESSY-1, 1024, 32, MakeColor(0, 0, 0), true);
+	DrawRectangle(MESSX, MESSY - 1, 1024, 32, MakeColor(0, 0, 0), true);
 	DrawString(MESSX, MESSY, string("Successfully restored ") + to_string(files) + " textures.", MakeColor(255, 255, 255));
 
 	return true;
@@ -949,7 +1041,7 @@ int LoadPNGThumbnails(string &folderPath)
 {
 	g_vTextures.clear();
 
-	if( RestorePNGThumbnails(folderPath) > 0 )
+	if (RestorePNGThumbnails(folderPath) > 0)
 		return 1;
 
 	ofstream outputFile;
@@ -976,7 +1068,7 @@ int LoadPNGThumbnails(string &folderPath)
 	}
 
 	outputFile << to_string(files) << "\n";
-	
+
 	uint32_t* thumbBits = new uint32_t[64 * 64];
 
 	for (auto & p : experimental::filesystem::directory_iterator(folderPath))
@@ -989,8 +1081,8 @@ int LoadPNGThumbnails(string &folderPath)
 			std::time_t cftime = decltype(ftime)::clock::to_time_t(ftime);
 			outputFile << p.path().filename() << " " << to_string(cftime) << '\n';
 			g_vTextures.push_back(p.path().filename().string());
-		
-			DrawRectangle(MESSX, MESSY-1, 1024, 32, MakeColor(0, 0, 0), true);
+
+			DrawRectangle(MESSX, MESSY - 1, 1024, 32, MakeColor(0, 0, 0), true);
 			DrawString(MESSX, MESSY, string("Loading: ") + filename, MakeColor(255, 255, 255));
 
 			uint32_t* thumbBitsIt = thumbBits;
@@ -1020,7 +1112,7 @@ int LoadPNGThumbnails(string &folderPath)
 
 	int ret = SaveNewBitmap2PNG(g_pThumbBuffer, fileAndPath, 2048, 2048);
 
-	DrawRectangle(MESSX, MESSY-1, 1024, 32, MakeColor(0, 0, 0), true);
+	DrawRectangle(MESSX, MESSY - 1, 1024, 32, MakeColor(0, 0, 0), true);
 	DrawString(MESSX, MESSY, string("Successfully loaded ") + to_string(count) + " textures.", MakeColor(255, 255, 255));
 
 	outputFile.close();
