@@ -680,6 +680,8 @@ int CopyTIM2Buffer(int sourcex, int sourcey, int destx, int desty, int rot)
 			int realX = xPixel;
 			int realY = yPixel;
 
+			// Rotations - Consider matrix Maths.
+
 			switch (rot) {
 			case 0: break;
 			case 1: realX = 31 - xPixel; break;
@@ -715,6 +717,7 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 	// Note the code below should copy the TIM at index "tileIndex" to the map grid square "mapIndex" 
 	// CopyTIM2Buffer(_TIMXPOS(tileIndex), _TIMYPOS(tileIndex), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
 
+	/*
 	///////////////////////////////BLUNT COLOURING/////////////////////////////////////////
 	// Pick a colour
 	Color myColor = MakeColor(0, 170, 0);
@@ -728,14 +731,14 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 		}
 	}
 	////////////////////////////////////////////////////////////////////////////////////////
-
-	// So this function is passed a pointer to a collection of Segments.
-	// 256 Segments?
-	/*
-	each Segment contains 16 POLYSTRUCTS
-	For each Polystruct, need to go through stuff.
 	*/
 
+	/*
+	// So this function is passed a pointer to a collection of Segments.
+	// 256 Segments?
+	each Segment contains 16 POLYSTRUCTS
+	*/
+	
 	/*
 	We need the color information from inside the TIM Buffer.
 	This will hopefully return an INT which should be the Color value for a given pixel, at a given rotation?
@@ -749,6 +752,7 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 	{
 		for (int SegmentColumn = 0; SegmentColumn < 16; SegmentColumn++)	// 3rd Loop through Every Column of Segment's collection of Polystructs
 		{
+			SEGMENT S = pSegments[SegmentRow*16 + SegmentColumn];
 			for (int PolySRow = 0; PolySRow < 4; PolySRow++)				// 2nd Loop through every Polystruct Row of Columns
 			{
 				for (int PolySColumn = 0; PolySColumn < 4; PolySColumn++)	// 1st Loop through all Polystruct Columns
@@ -762,37 +766,31 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 					// It also has a rotation value. And we can use maths to work out where we want to put things.
 
 					int SegmentsCrossed = (SegmentRow * 16 + SegmentColumn);
-					int PolystructsCrossed = PolySRow * 4 + PolySColumn;
-					int TotalPolystructsCrossed = (SegmentsCrossed * 16) + PolystructsCrossed;
-
-					//int xPixel = (SegmentColumn * 128) + (PolySColumn * 16);
-					//int yPixel = (SegmentRow * 2048) + (PolySRow * 16);
+					int PolystructsCrossed = PolySRow * 4 + PolySColumn; 
+					// Don't care how many Poly's we've crossed What's the Poly Column.
+					//int TotalPolystructsCrossed = (SegmentsCrossed * 16) + PolystructsCrossed;
+					//int TotalPolystructsCrossed = (SegmentsCrossed * 256) + PolystructsCrossed;
 					
-					POLYSTRUCT P = pSegments->strTilePolyStruct[TotalPolystructsCrossed];
+					int TotalXPolys = SegmentColumn * 4 + PolySColumn;
+					int TotalYPolys = SegmentRow * 4 + PolySRow;
+
+
+					int whichPoly = PolySRow * 4 + PolySColumn;
+
+					
+					POLYSTRUCT P = S.strTilePolyStruct[whichPoly];
+
+
 					tileRot = P.cRot;
 					//Polystruct Index 4096 0-4095
 
 					//CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
-					CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), _MAPXPOS(TotalPolystructsCrossed), _MAPYPOS(TotalPolystructsCrossed), tileRot);
-					//CopyTIM2Buffer(xPixel, yPixel, xPixel, yPixel, 1);
+					CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), TotalXPolys * 32, TotalYPolys * 32, tileRot);
+					//CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), SegmentsCrossed*128, _MAPYPOS(TotalPolystructsCrossed), tileRot);
 				}
 			}
 		}
 	}
-
-
-	// By passing the function _TIMXPOS
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	/*
-	Look at the first segment.
-	Go through all 16 Polystructs of the 1st segment. (POLYSTRUCTS = TIM Representation)?
-	Copying 4 TIMS across. 4 Times. (4 rows).
-
-
-	*/
 
 	return 0;
 }
