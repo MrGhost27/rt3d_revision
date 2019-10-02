@@ -669,7 +669,7 @@ int CopyTIM2Buffer(int sourcex, int sourcey, int destx, int desty, int rot)
 	For Every pixel within the TIM, we want to write this to the Map Buffer.
 	*/
 
-	
+	Color DC = MakeColor(50, 0, 0);
 
 	for (int yPixel = 0; yPixel < 32; yPixel++)
 	{
@@ -681,16 +681,20 @@ int CopyTIM2Buffer(int sourcex, int sourcey, int destx, int desty, int rot)
 			int realY = yPixel;
 
 			// Rotations - Consider matrix Maths.
+			// Rotations 0,1,2,3,4,5,6 appear to give a coherent picture.
+			// Rotations Debug Confirmed: 2,3
+
 
 			switch (rot) {
 			case 0: break;						// No change
 			case 1: realX = 31 - xPixel; break;	// Flip on X axis.
-			case 2: realX = yPixel; realY = 31 - xPixel; break;	// Rotate 90.
+			case 2: realX = 31 - yPixel; realY = xPixel; break;	// Rotate 90.
 			case 3: realX = 31 - yPixel; realY = 31 - xPixel; break;	// Flip X & rotate 90. 
 			case 4: realX = 31 - xPixel; realY = 31 - yPixel; break;	// Rotate 180
 			case 5: realY = 31 - yPixel; break;	// Flip on Y axis
-			case 6: realX = 31 - yPixel; realY = xPixel; break;	// Rotate 270
-			case 7: realX = 31 - yPixel; realY = 31 - xPixel; break;	// Rotate 270 and Flip on X
+			case 6: realX = yPixel; realY = 31 - xPixel; break;	// Rotate 270
+			case 7: realX = yPixel; realY = xPixel; break;	// Rotate 270 and Flip on X
+			
 			default: break;
 			}
 			
