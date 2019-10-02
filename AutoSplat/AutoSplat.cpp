@@ -669,7 +669,7 @@ int CopyTIM2Buffer(int sourcex, int sourcey, int destx, int desty, int rot)
 	For Every pixel within the TIM, we want to write this to the Map Buffer.
 	*/
 
-	Color DC = MakeColor(50, 0, 0);
+	//Color DC = MakeColor(50, 0, 0);	// Debug Colour added for checking rotations
 
 	for (int yPixel = 0; yPixel < 32; yPixel++)
 	{
@@ -781,11 +781,10 @@ int DrawSegments2Buffer(SEGMENT* pSegments)
 					int whichPoly = PolySRow * 4 + PolySColumn;
 
 					
-					POLYSTRUCT P = S.strTilePolyStruct[whichPoly];
+					POLYSTRUCT* P = &S.strTilePolyStruct[whichPoly];	// Use of a pointer instead of a Copy Constructor.
 
-
-					tileRot = P.cRot;
-					tileIndex = P.cTileRef;
+					tileRot = P->cRot;
+					tileIndex = P->cTileRef;
 					//Polystruct Index 4096 0-4095
 
 					//CopyTIM2Buffer(_TIMXPOS(P.cTileRef), _TIMYPOS(P.cTileRef), _MAPXPOS(mapIndex), _MAPYPOS(mapIndex), tileRot);
